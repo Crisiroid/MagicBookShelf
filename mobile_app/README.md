@@ -1,16 +1,11 @@
 # mobile_app
 
-A new Flutter project.
+Mobile Applicatino for Magic Bookshelf 
 
-## Getting Started
+lib Directory contains all important codes. 
+image Directory contains all pictures and external icons. 
 
-This project is a starting point for a Flutter application.
 
-A few resources to get you started if this is your first Flutter project:
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+check and configure pubspec.yaml before editing the Code. 
