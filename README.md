@@ -16,7 +16,9 @@
   Created Using Flutter & ASP.NET<br/>
   Designed by Crisiroid<br/>
 </h3>
-# Quick Start
+<div id="header">
+  <p>Quick Start</p>
+</div>
 
-* The `mobile_app/lib` directory contains client side codes.
-* The `material` directory contains server side codes. 
+The `mobile_app/lib` directory contains client side codes.
+The `material` directory contains server side codes. 
