@@ -26,7 +26,7 @@ namespace server.Controllers
         [HttpPost("createUser")]
         public IActionResult createUser([FromBody] UserDTO user)
         {
-            if(user == null)
+            if (user == null)
             {
                 return BadRequest();
             }
@@ -49,14 +49,14 @@ namespace server.Controllers
         [HttpDelete("removeUser")]
         public IActionResult removeUser(int id)
         {
-            if(id == 0)
+            if (id == 0)
             {
                 return BadRequest();
             }
 
             var dbUser = _DBContext.Users.FirstOrDefault(u => u.Id == id);
 
-            if(dbUser == null)
+            if (dbUser == null)
             {
                 return NotFound();
             }
@@ -70,14 +70,14 @@ namespace server.Controllers
 
         [HttpPut("updateUser")]
 
-        public IActionResult updateUser([FromBody] UserDTO user)
+        public IActionResult updateUser([FromBody] UserDTO user, int id)
         {
             if (user == null)
             {
                 return BadRequest();
             }
 
-            var dbUser = _DBContext.Users.Find(user);
+            var dbUser = _DBContext.Users.Find(id);
             if (dbUser == null)
             {
                 return NotFound();
@@ -95,5 +95,39 @@ namespace server.Controllers
 
             return Ok("User is updated");
         }
+        [HttpPut("updateBookNumber")]
+        public IActionResult updateBookNumber(int id, bool mode)
+        {
+            // mode = true => increase the bookNumber
+            // mode = false => decrease the bookNumber
+            if(id == 0)
+            {
+                return BadRequest();
+            }
+
+            var user = _DBContext.Users.Find(id);
+            if(user == null)
+            {
+                return NotFound();
+            }
+            if(mode)
+            {
+                user.BookNum += 1;
+
+            }
+            else
+            {
+                user.BookNum -= 1;
+            }
+
+
+            _DBContext.Users.Update(user);
+
+            _DBContext.SaveChanges();
+
+            return Ok("The number of Books is Updated!");
+        }
+
     }
+    
 }
