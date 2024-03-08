@@ -10,7 +10,5 @@ namespace server.Model.DTO
         public string Email { get; set; }
         [Required]
         public string Password { get; set; }
-        public int Score { get; set; }
-        public int BookNum { get; set; }
     }
 }
