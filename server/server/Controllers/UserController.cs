@@ -1,7 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 using server.Data;
 using server.Model;
 using server.Model.DTO;
+using System.IdentityModel.Tokens.Jwt;
+using System.Text;
 
 namespace server.Controllers
 {
@@ -9,10 +12,12 @@ namespace server.Controllers
     [ApiController]
     public class UserController : ControllerBase
     {
+        private IConfiguration _config;
         private BookshelfDBContext _DBContext;
-        public UserController(BookshelfDBContext dBContext)
+        public UserController(BookshelfDBContext dBContext, IConfiguration config)
         {
             _DBContext = dBContext;
+            _config = config;
         }
 
 
@@ -20,6 +25,26 @@ namespace server.Controllers
         public IActionResult getAllUsers()
         {
             return Ok(_DBContext.Users);
+        }
+
+
+
+        [HttpGet("getUser")]
+        public IActionResult getUser(int id)
+        {
+            if(id == 0)
+            {
+                return BadRequest();
+            }
+
+            var user = _DBContext.Users.Find(id);
+
+            if(user == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(user);
         }
 
 
@@ -46,6 +71,7 @@ namespace server.Controllers
 
         }
 
+
         [HttpDelete("removeUser")]
         public IActionResult removeUser(int id)
         {
@@ -68,8 +94,8 @@ namespace server.Controllers
             return Ok("User is Deleted");
         }
 
-        [HttpPut("updateUser")]
 
+        [HttpPut("updateUser")]
         public IActionResult updateUser([FromBody] UserDTO user, int id)
         {
             if (user == null)
@@ -95,6 +121,8 @@ namespace server.Controllers
 
             return Ok("User is updated");
         }
+
+
         [HttpPut("updateBookNumber")]
         public IActionResult updateBookNumber(int id, bool mode)
         {
@@ -126,6 +154,31 @@ namespace server.Controllers
             _DBContext.SaveChanges();
 
             return Ok("The number of Books is Updated!");
+        }
+
+        [HttpPost("userLogin")]
+        public IActionResult userLogin(string Username, string Password)
+        {
+            if(Username.IsNullOrEmpty() || Password.IsNullOrEmpty())
+            {
+                return BadRequest();
+            }
+            var user = _DBContext.Users.FirstOrDefault(x=>x.Name == Username && x.Password == Password);
+            if(user == null)
+            {
+                return NotFound();
+            }
+            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["JwtSettings:Key"]));
+            var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
+
+            var Sectoken = new JwtSecurityToken(_config["JwtSettings:Issuer"],
+              _config["JwtSettings:Issuer"],
+              null,
+              expires: DateTime.Now.AddMinutes(120),
+              signingCredentials: credentials);
+
+            var token = new JwtSecurityTokenHandler().WriteToken(Sectoken);
+            return Ok(token);
         }
 
     }
